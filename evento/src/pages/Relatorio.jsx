@@ -1,40 +1,34 @@
-import { useState, useEffect } from 'react';
-import api from '../api/axios';
+import React, { useState } from 'react';
 
 function Relatorio() {
-const [relatorios, setRelatorios] = useState([]);
+  const [relatorios, setRelatorios] = useState([]);
 
-useEffect(() => {
-fetchRelatorio();
-}, []);
+  const gerarRelatorio = () => {
+    setRelatorios([
+      { local: 'Local 1', quantidade: 2, eventos: ['Evento A', 'Evento B'] },
+      { local: 'Local 2', quantidade: 1, eventos: ['Evento C'] },
+    ]);
+  };
 
-const fetchRelatorio = async () => {
-try {
-    const response = await api.get('/relatorio');
-    setRelatorios(response.data);
-} catch (error) {
-    console.error('Erro ao buscar relatório:', error);
-}
-};
-
-return (
-<div>
-    <h1>Relatório por Local</h1>
-    <ul>
-    {relatorios.map((relatorio) => (
-        <li key={relatorio.localId}>
-        <h2>{relatorio.localNome}</h2>
-        <p>Quantidade de eventos: {relatorio.quantidade}</p>
-        <ul>
-            {relatorio.eventos.map((evento) => (
-            <li key={evento.id}>{evento.nome}</li>
-            ))}
-        </ul>
-        </li>
-    ))}
-    </ul>
-</div>
-);
+  return (
+    <div>
+      <h1>Relatório por Local</h1>
+      <button onClick={gerarRelatorio}>Gerar Relatório</button>
+      <ul>
+        {relatorios.map((relatorio, index) => (
+          <li key={index}>
+            <h2>{relatorio.local}</h2>
+            <p>Quantidade de eventos: {relatorio.quantidade}</p>
+            <ul>
+              {relatorio.eventos.map((evento, idx) => (
+                <li key={idx}>{evento}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export default Relatorio
+export default Relatorio;

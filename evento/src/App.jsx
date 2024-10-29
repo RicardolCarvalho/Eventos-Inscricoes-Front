@@ -1,18 +1,20 @@
+import React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import Locais from './pages/Locais';
 import Eventos from './pages/Eventos';
 import Relatorio from './pages/Relatorio';
 import Inscritos from './pages/Inscritos';
-import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <header>
         <nav>
-          <Link to="/locais">Locais</Link> | 
-          <Link to="/eventos">Eventos</Link> | 
-          <Link to="/relatorio">Relatório</Link>
+          <ul>
+            <li><Link to="/locais">Locais</Link></li>
+            <li><Link to="/eventos">Eventos</Link></li>
+            <li><Link to="/relatorio">Relatório</Link></li>
+          </ul>
         </nav>
       </header>
       <Routes>
@@ -25,4 +27,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

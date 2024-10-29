@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import api from '../api/axios';
+import React, { useState } from 'react';
 
 function Locais() {
   const [locais, setLocais] = useState([]);
@@ -7,39 +6,12 @@ function Locais() {
   const [endereco, setEndereco] = useState('');
   const [capacidade, setCapacidade] = useState('');
 
-  useEffect(() => {
-    fetchLocais();
-  }, []);
-
-  const fetchLocais = async () => {
-    try {
-      const response = await api.get('/locais');
-      setLocais(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar locais:', error);
-    }
-  };
-
-  const handleAddLocal = async () => {
-    try {
-      const novoLocal = { nome, endereco, capacidade };
-      await api.post('/locais', novoLocal);
-      fetchLocais();
-      setNome('');
-      setEndereco('');
-      setCapacidade('');
-    } catch (error) {
-      console.error('Erro ao adicionar local:', error);
-    }
-  };
-
-  const handleDeleteLocal = async (id) => {
-    try {
-      await api.delete(`/locais/${id}`);
-      fetchLocais();
-    } catch (error) {
-      console.error('Erro ao excluir local:', error);
-    }
+  const handleAddLocal = () => {
+    const novoLocal = { nome, endereco, capacidade };
+    setLocais([...locais, novoLocal]);
+    setNome('');
+    setEndereco('');
+    setCapacidade('');
   };
 
   return (
@@ -65,10 +37,9 @@ function Locais() {
       />
       <button onClick={handleAddLocal}>Adicionar Local</button>
       <ul>
-        {locais.map((local) => (
-          <li key={local.id}>
+        {locais.map((local, index) => (
+          <li key={index}>
             {local.nome} - {local.endereco} - {local.capacidade}
-            <button onClick={() => handleDeleteLocal(local.id)}>Excluir</button>
           </li>
         ))}
       </ul>
