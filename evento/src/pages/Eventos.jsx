@@ -1,4 +1,6 @@
+// src/pages/Eventos.jsx
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
 function Eventos() {
@@ -7,6 +9,7 @@ function Eventos() {
   const [data, setData] = useState('');
   const [localId, setLocalId] = useState('');
   const [locais, setLocais] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEventos();
@@ -44,6 +47,10 @@ function Eventos() {
     }
   };
 
+  const handleNavigateToInscritos = (id) => {
+    navigate(`/inscritos/${id}`);
+  };
+
   return (
     <div>
       <h1>Eventos</h1>
@@ -71,6 +78,9 @@ function Eventos() {
         {eventos.map((evento) => (
           <li key={evento.id}>
             {evento.nome} - {evento.data} - {evento.localNome}
+            <button onClick={() => handleNavigateToInscritos(evento.id)}>
+              Ver Inscritos
+            </button>
           </li>
         ))}
       </ul>
