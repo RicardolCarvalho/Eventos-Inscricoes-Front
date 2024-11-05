@@ -1,14 +1,48 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Locais() {
   const [nome, setNome] = useState('');
   const [endereco, setEndereco] = useState('');
-  const [dataHora, setDataHora] = useState('');
+  const [locais, setLocais] = useState([]);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const fetchLocais = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/locais');
+        const data = await response.json();
+        setLocais(data.content);
+      } catch (error) {
+        console.error("Erro ao buscar locais:", error);
+      }
+    };
+
+    fetchLocais();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aqui você adicionaria lógica para enviar os dados
-    console.log({ nome, endereco, dataHora });
+    try {
+      await fetch('http://localhost:8080/api/v1/locais', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, endereco })
+      });
+      setNome('');
+      setEndereco('');
+      // Recarregar locais
+      fetchLocais();
+    } catch (error) {
+      console.error("Erro ao criar local:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:8080/api/v1/locais/${id}`, { method: 'DELETE' });
+      setLocais(locais.filter(local => local.id !== id));
+    } catch (error) {
+      console.error("Erro ao deletar local:", error);
+    }
   };
 
   return (
@@ -21,11 +55,19 @@ function Locais() {
             <tr>
               <th>Nome</th>
               <th>Endereço</th>
-              <th>Data/Hora</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {/* Aqui vão os dados dos locais */}
+            {locais.map((local, index) => (
+              <tr key={index}>
+                <td>{local.nome}</td>
+                <td>{local.endereco}</td>
+                <td>
+                  <button onClick={() => handleDelete(local.id)}>Deletar</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -43,11 +85,6 @@ function Locais() {
             placeholder="Endereço"
             value={endereco}
             onChange={(e) => setEndereco(e.target.value)}
-          />
-          <input
-            type="datetime-local"
-            value={dataHora}
-            onChange={(e) => setDataHora(e.target.value)}
           />
           <button type="submit">Criar</button>
         </form>

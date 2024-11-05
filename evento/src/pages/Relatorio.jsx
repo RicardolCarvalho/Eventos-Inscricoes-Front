@@ -3,11 +3,14 @@ import React, { useState } from 'react';
 function Relatorio() {
   const [relatorios, setRelatorios] = useState([]);
 
-  const gerarRelatorio = () => {
-    setRelatorios([
-      { local: 'Local 1', quantidade: 2, eventos: ['Evento A', 'Evento B'] },
-      { local: 'Local 2', quantidade: 1, eventos: ['Evento C'] },
-    ]);
+  const gerarRelatorio = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/locais/{id}/relatorio');
+      const data = await response.json();
+      setRelatorios(data.content);
+    } catch (error) {
+      console.error("Erro ao gerar o relatório:", error);
+    }
   };
 
   return (
@@ -17,7 +20,7 @@ function Relatorio() {
       <ul>
         {relatorios.map((relatorio, index) => (
           <li key={index}>
-            <h2>{relatorio.local}</h2>
+            <h2>{relatorio.localNome}</h2>
             <p>Quantidade de eventos: {relatorio.quantidade}</p>
             <ul>
               {relatorio.eventos.map((evento, idx) => (

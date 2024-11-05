@@ -1,14 +1,50 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Eventos() {
   const [nome, setNome] = useState('');
   const [local, setLocal] = useState('');
   const [dataHora, setDataHora] = useState('');
+  const [eventos, setEventos] = useState([]);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/eventos');
+        const data = await response.json();
+        setEventos(data.content);
+      } catch (error) {
+        console.error("Erro ao buscar eventos:", error);
+      }
+    };
+
+    fetchEventos();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Adicionar lógica para enviar dados
-    console.log({ nome, local, dataHora });
+    try {
+      await fetch('http://localhost:8080/api/v1/eventos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, local, dataHora })
+      });
+      setNome('');
+      setLocal('');
+      setDataHora('');
+      // Recarregar eventos
+      fetchEventos();
+    } catch (error) {
+      console.error("Erro ao criar evento:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:8080/api/v1/eventos/${id}`, { method: 'DELETE' });
+      setEventos(eventos.filter(evento => evento.id !== id));
+    } catch (error) {
+      console.error("Erro ao deletar evento:", error);
+    }
   };
 
   return (
@@ -22,10 +58,20 @@ function Eventos() {
               <th>Nome</th>
               <th>Local</th>
               <th>Data/Hora</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {/* Aqui vão os dados dos eventos */}
+            {eventos.map((evento, index) => (
+              <tr key={index}>
+                <td>{evento.nome}</td>
+                <td>{evento.localNome}</td>
+                <td>{evento.dataHora}</td>
+                <td>
+                  <button onClick={() => handleDelete(evento.id)}>Deletar</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -52,7 +98,6 @@ function Eventos() {
           <button type="submit">Criar</button>
         </form>
       </div>
-      <button>Relatório</button>
     </div>
   );
 }
