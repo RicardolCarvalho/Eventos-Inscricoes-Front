@@ -4,35 +4,47 @@ import { useParams } from 'react-router-dom';
 function Inscritos() {
   const { eventoId } = useParams();
   const [inscritos, setInscritos] = useState([]);
+  const [usuarioMap, setUsuarioMap] = useState({});
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
     async function fetchInscritos() {
       try {
+        // Faz a requisição para buscar todas as inscrições do evento específico
+        const responseInscricoes = await fetch(`http://localhost:8081/projeto/v1/inscricoes/evento/${eventoId}`);
+        if (!responseInscricoes.ok) throw new Error("Erro ao buscar inscrições");
+
+        const dataInscricoes = await responseInscricoes.json();
+        const inscritosEvento = dataInscricoes.content.filter(inscricao => inscricao.evento === eventoId);
+        
+        setInscritos(inscritosEvento); // Atualiza o estado com as inscrições filtradas
+      } catch (error) {
+        setErro(error.message);
+      }
+    }
+
+    async function fetchUsuarios() {
+      try {
         // Faz a requisição para buscar todos os usuários
         const responseUsuarios = await fetch(`http://localhost:8081/projeto/v1/usuario`);
+        if (!responseUsuarios.ok) throw new Error("Erro ao buscar usuários");
+
+        const dataUsuarios = await responseUsuarios.json();
         
-        if (!responseUsuarios.ok) {
-          const errorText = await responseUsuarios.text();
-          console.error("Erro ao buscar usuários:", errorText);
-          throw new Error(`Erro ao buscar usuários: ${errorText}`);
-        }
+        // Cria um mapa de usuários { usuarioId: nome }
+        const usuarioMapTemp = {};
+        dataUsuarios.content.forEach(usuario => {
+          usuarioMapTemp[usuario.id] = usuario.nome;
+        });
 
-        // Parse da resposta JSON e acesso à lista de usuários em 'content'
-        const todosUsuarios = await responseUsuarios.json();
-
-        // Filtrar usuários que possuem o eventoId desejado (verifique se o campo existe)
-        const usuariosInscritos = todosUsuarios.content.filter(usuario =>
-          usuario.eventoId === eventoId // Certifique-se de que 'eventoId' seja o campo correto
-        );
-
-        setInscritos(usuariosInscritos);
+        setUsuarioMap(usuarioMapTemp);
       } catch (error) {
         setErro(error.message);
       }
     }
 
     fetchInscritos();
+    fetchUsuarios();
   }, [eventoId]);
 
   return (
@@ -42,8 +54,10 @@ function Inscritos() {
         <p>Erro: {erro}</p>
       ) : (
         <ul>
-          {inscritos.map((inscrito, index) => (
-            <li key={index}>{inscrito.nome} - {inscrito.email}</li>
+          {inscritos.map((inscrito) => (
+            <li key={inscrito.id}>
+              Nome: {usuarioMap[inscrito.usuario] || "Desconhecido"} - Ativo: {inscrito.active ? "Sim" : "Não"}
+            </li>
           ))}
         </ul>
       )}
