@@ -1,42 +1,70 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+.header {
+  background-color: #ff6600;
+  padding: 1rem;
+  color: white;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.header nav a {
+  color: white;
+  margin: 0 1rem;
+  text-decoration: none;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.lobby {
+  text-align: center;
+  margin-top: 2rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.lobby button {
+  background-color: #ff6600;
+  color: white;
+  padding: 1rem;
+  margin: 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-.card {
-  padding: 2em;
+.locais-page, .eventos-page {
+  display: flex;
+  justify-content: space-around;
+  padding: 2rem;
 }
 
-.read-the-docs {
-  color: #888;
+.list {
+  width: 60%;
+}
+
+.list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.list th, .list td {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.form {
+  width: 30%;
+  background-color: #ff6600;
+  padding: 1rem;
+  color: white;
+  border-radius: 5px;
+}
+
+.form input, .form button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
 }

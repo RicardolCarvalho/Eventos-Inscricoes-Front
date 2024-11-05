@@ -1,13 +1,10 @@
-// src/main.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App'; // Importando corretamente o App
-import './index.css'; // Estilo global opcional
-import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import './index.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root')); // Seleciona o div root
-root.render(
-  <BrowserRouter>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <App />
-  </BrowserRouter>
+  </React.StrictMode>
 );

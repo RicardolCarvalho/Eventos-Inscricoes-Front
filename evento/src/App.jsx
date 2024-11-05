@@ -1,28 +1,39 @@
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
-import Locais from './pages/Locais';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import Header from './components/Header';
 import Eventos from './pages/Eventos';
-import Relatorio from './pages/Relatorio';
 import Inscritos from './pages/Inscritos';
+import Locais from './pages/Locais';
+import Relatorio from './pages/Relatorio';
+import './App.css'; 
 
 function App() {
   return (
-    <div>
-      <header>
-        <nav>
-          <ul>
-            <li><Link to="/locais">Locais</Link></li>
-            <li><Link to="/eventos">Eventos</Link></li>
-            <li><Link to="/relatorio">Relatório</Link></li>
-          </ul>
-        </nav>
-      </header>
+    <Router>
+      <Header />
       <Routes>
-        <Route path="/locais" element={<Locais />} />
+        <Route path="/" element={<Lobby />} /> {/* Define Lobby como a página inicial */}
         <Route path="/eventos" element={<Eventos />} />
+        <Route path="/inscritos" element={<Inscritos />} />
+        <Route path="/locais" element={<Locais />} />
         <Route path="/relatorio" element={<Relatorio />} />
-        <Route path="/inscritos/:eventoId" element={<Inscritos />} />
       </Routes>
+    </Router>
+  );
+}
+
+// Componente Lobby, que serve como tela inicial
+function Lobby() {
+  return (
+    <div className="lobby">
+      <h1 className="lobby-title">LOBBY</h1>
+      <div className="button-container">
+        <Link to="/locais">
+          <button className="lobby-button">LOCAIS</button>
+        </Link>
+        <Link to="/eventos">
+          <button className="lobby-button">EVENTOS</button>
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,12 +1,25 @@
-/* src/index.css */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  margin: 0;
-  padding: 0;
+/* Definição da fonte Rubik Mono One */
+@font-face {
+  font-family: 'RubikMono';
+  src: url('./fontes/Rubik_Mono_One/RubikMonoOne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-h1 {
-  text-align: center;
-  margin-top: 20px;
+/* Definição da fonte Montserrat */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./fontes/Montserrat/Montserrat-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Montserrat'; /* Define Montserrat como fonte padrão */
+}
+
+/* Estilo específico para o título "LOBBY" */
+.lobby-title {
+  font-family: 'RubikMono';
+  color: #ff6600;
 }
