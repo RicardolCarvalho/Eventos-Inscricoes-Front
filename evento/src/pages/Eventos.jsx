@@ -2,48 +2,69 @@ import React, { useState, useEffect } from 'react';
 
 function Eventos() {
   const [nome, setNome] = useState('');
-  const [local, setLocal] = useState('');
+  const [localId, setLocalId] = useState('');
   const [dataHora, setDataHora] = useState('');
+  const [capacidade, setCapacidade] = useState('');
   const [eventos, setEventos] = useState([]);
+  const [locais, setLocais] = useState([]);
 
   useEffect(() => {
-    const fetchEventos = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/v1/eventos');
-        const data = await response.json();
-        setEventos(data.content);
-      } catch (error) {
-        console.error("Erro ao buscar eventos:", error);
-      }
-    };
-
     fetchEventos();
+    fetchLocais();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchEventos = async () => {
     try {
-      await fetch('http://localhost:8080/api/v1/eventos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, local, dataHora })
-      });
-      setNome('');
-      setLocal('');
-      setDataHora('');
-      // Recarregar eventos
-      fetchEventos();
+      const response = await fetch('http://localhost:8080/api/v1/eventos');
+      const data = await response.json();
+      setEventos(data.content);
     } catch (error) {
-      console.error("Erro ao criar evento:", error);
+      console.error("Erro ao buscar eventos:", error);
     }
   };
 
-  const handleDelete = async (id) => {
+  const fetchLocais = async () => {
     try {
-      await fetch(`http://localhost:8080/api/v1/eventos/${id}`, { method: 'DELETE' });
-      setEventos(eventos.filter(evento => evento.id !== id));
+      const response = await fetch('http://localhost:8080/api/v1/locais');
+      const data = await response.json();
+      setLocais(data.content);
     } catch (error) {
-      console.error("Erro ao deletar evento:", error);
+      console.error("Erro ao buscar locais:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!nome || !localId || !dataHora || !capacidade) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    const eventoData = {
+      nome,
+      localId,
+      dataHora,
+      capacidade: parseInt(capacidade, 10)
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/eventos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventoData)
+      });
+
+      if (response.ok) {
+        console.log("Evento criado com sucesso!");
+        setNome('');
+        setLocalId('');
+        setDataHora('');
+        setCapacidade('');
+        fetchEventos(); // Atualizar lista de eventos após criação
+      }
+    } catch (error) {
+      console.error("Erro ao criar evento:", error);
     }
   };
 
@@ -58,7 +79,6 @@ function Eventos() {
               <th>Nome</th>
               <th>Local</th>
               <th>Data/Hora</th>
-              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -67,9 +87,6 @@ function Eventos() {
                 <td>{evento.nome}</td>
                 <td>{evento.localNome}</td>
                 <td>{evento.dataHora}</td>
-                <td>
-                  <button onClick={() => handleDelete(evento.id)}>Deletar</button>
-                </td>
               </tr>
             ))}
           </tbody>
@@ -83,17 +100,28 @@ function Eventos() {
             placeholder="Nome do Evento"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
+            required
           />
-          <input
-            type="text"
-            placeholder="Local"
-            value={local}
-            onChange={(e) => setLocal(e.target.value)}
-          />
+          <select value={localId} onChange={(e) => setLocalId(e.target.value)} required>
+            <option value="">Selecione um Local</option>
+            {locais.map((local) => (
+              <option key={local.id} value={local.id}>
+                {local.nome}
+              </option>
+            ))}
+          </select>
           <input
             type="datetime-local"
             value={dataHora}
             onChange={(e) => setDataHora(e.target.value)}
+            required
+          />
+          <input
+            type="number"
+            placeholder="Capacidade"
+            value={capacidade}
+            onChange={(e) => setCapacidade(e.target.value)}
+            required
           />
           <button type="submit">Criar</button>
         </form>
