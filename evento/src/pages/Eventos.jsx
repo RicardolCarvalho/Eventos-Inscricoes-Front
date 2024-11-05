@@ -18,7 +18,7 @@ function Eventos() {
 
   const fetchEventos = async () => {
     try {
-      const response = await api.get('/eventos');
+      const response = await api.get('/api/v1/eventos');
       setEventos(response.data);
     } catch (error) {
       console.error('Erro ao buscar eventos:', error);
@@ -27,7 +27,7 @@ function Eventos() {
 
   const fetchLocais = async () => {
     try {
-      const response = await api.get('/locais');
+      const response = await api.get('/api/v1/locais');
       setLocais(response.data);
     } catch (error) {
       console.error('Erro ao buscar locais:', error);
