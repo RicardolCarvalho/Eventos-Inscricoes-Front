@@ -4,55 +4,49 @@ import { useParams } from 'react-router-dom';
 function Inscritos() {
   const { eventoId } = useParams();
   const [inscritos, setInscritos] = useState([]);
-  const [email, setEmail] = useState('');
+  const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    const fetchInscritos = async () => {
+    async function fetchInscritos() {
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/eventos/${eventoId}/participantes`);
-        const data = await response.json();
-        setInscritos(data);
+        // Faz a requisição para buscar todos os usuários
+        const responseUsuarios = await fetch(`http://localhost:8081/projeto/v1/usuario`);
+        
+        if (!responseUsuarios.ok) {
+          const errorText = await responseUsuarios.text();
+          console.error("Erro ao buscar usuários:", errorText);
+          throw new Error(`Erro ao buscar usuários: ${errorText}`);
+        }
+
+        // Parse da resposta JSON e acesso à lista de usuários em 'content'
+        const todosUsuarios = await responseUsuarios.json();
+
+        // Filtrar usuários que possuem o eventoId desejado (verifique se o campo existe)
+        const usuariosInscritos = todosUsuarios.content.filter(usuario =>
+          usuario.eventoId === eventoId // Certifique-se de que 'eventoId' seja o campo correto
+        );
+
+        setInscritos(usuariosInscritos);
       } catch (error) {
-        console.error("Erro ao buscar inscritos:", error);
+        setErro(error.message);
       }
-    };
+    }
 
     fetchInscritos();
   }, [eventoId]);
 
-  const handleAddParticipante = async (e) => {
-    e.preventDefault();
-    try {
-      await fetch(`http://localhost:8080/api/v1/eventos/${eventoId}/participantes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(email)
-      });
-      setInscritos([...inscritos, { email }]);
-      setEmail('');
-    } catch (error) {
-      console.error("Erro ao adicionar participante:", error);
-    }
-  };
-
   return (
     <div>
       <h1>Inscritos no Evento</h1>
-      <ul>
-        {inscritos.map((inscrito, index) => (
-          <li key={index}>{inscrito.nome} - {inscrito.email}</li>
-        ))}
-      </ul>
-      <form onSubmit={handleAddParticipante}>
-        <input
-          type="email"
-          placeholder="Email do Participante"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <button type="submit">Adicionar Participante</button>
-      </form>
+      {erro ? (
+        <p>Erro: {erro}</p>
+      ) : (
+        <ul>
+          {inscritos.map((inscrito, index) => (
+            <li key={index}>{inscrito.nome} - {inscrito.email}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Lobby />} /> {/* Define Lobby como a página inicial */}
         <Route path="/eventos" element={<Eventos />} />
-        <Route path="/inscritos" element={<Inscritos />} />
+        <Route path="/eventos/:eventoId/inscritos" element={<Inscritos />} /> {/* Ajuste aqui */}
         <Route path="/locais" element={<Locais />} />
         <Route path="/relatorio" element={<Relatorio />} />
       </Routes>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 function Eventos() {
   const [nome, setNome] = useState('');
@@ -61,7 +62,7 @@ function Eventos() {
         setLocalId('');
         setDataHora('');
         setCapacidade('');
-        fetchEventos(); // Atualizar lista de eventos após criação
+        fetchEventos();
       }
     } catch (error) {
       console.error("Erro ao criar evento:", error);
@@ -72,7 +73,6 @@ function Eventos() {
     <div className="eventos-page">
       <div className="list">
         <h2>Eventos</h2>
-        <input type="text" placeholder="Buscar..." />
         <table>
           <thead>
             <tr>
@@ -82,9 +82,11 @@ function Eventos() {
             </tr>
           </thead>
           <tbody>
-            {eventos.map((evento, index) => (
-              <tr key={index}>
-                <td>{evento.nome}</td>
+            {eventos.map((evento) => (
+              <tr key={evento.id}>
+                <td>
+                  <Link to={`/eventos/${evento.id}/inscritos`}>{evento.nome}</Link>
+                </td>
                 <td>{evento.localNome}</td>
                 <td>{evento.dataHora}</td>
               </tr>
